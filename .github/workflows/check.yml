@@ -1,0 +1,24 @@
+on:
+  push:
+
+jobs:
+  test:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+    - name: install gotip
+      run: |
+        git clone --depth=1 https://go.googlesource.com/go $HOME/gotip
+        cd $HOME/gotip/src
+        ./make.bash
+        echo "GOROOT=$HOME/gotip" >> $GITHUB_ENV
+        echo "$HOME/gotip/bin:$PATH" >> $GITHUB_PATH
+    - name: check out
+      uses: actions/checkout@v2
+    - name: test
+      run: go test ./... -race -v -coverprofile="coverage.txt" -covermode=atomic
+    - name: upload coverage
+      uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+

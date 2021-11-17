@@ -1,4 +1,4 @@
-# go-optional
+# go-optional [![.github/workflows/check.yml](https://github.com/moznion/go-optional/actions/workflows/check.yml/badge.svg)](https://github.com/moznion/go-optional/actions/workflows/check.yml) [![codecov](https://codecov.io/gh/moznion/go-optional/branch/main/graph/badge.svg?token=0HCVy6COy4)](https://codecov.io/gh/moznion/go-optional)
 
 A library that provides [Go Generics](https://go.dev/blog/generics-proposal) friendly "optional" features.
 

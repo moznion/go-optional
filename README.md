@@ -5,28 +5,43 @@ A library that provides [Go Generics](https://go.dev/blog/generics-proposal) fri
 ## Synopsis
 
 ```go
-some := Some[int](123)
-fmt.Printf("%v\n", some.IsSome()) # => true
-fmt.Printf("%v\n", some.IsNone()) # => false
+some := optional.Some[int](123)
+fmt.Printf("%v\n", some.IsSome()) // => true
+fmt.Printf("%v\n", some.IsNone()) // => false
 
 v, err := some.Take()
-fmt.Printf("err is nil: %v\n", err == nil) # => err is nil: true
-fmt.Printf("%d\n", v) # => 123
+fmt.Printf("err is nil: %v\n", err == nil) // => err is nil: true
+fmt.Printf("%d\n", v) // => 123
 
 mapped := optional.Map(some, func (v int) int {
     return v * 2
 })
-fmt.Printf("%v\n", mapped.IsSome()) # => true
+fmt.Printf("%v\n", mapped.IsSome()) // => true
 
 mappedValue, _ := some.Take()
-fmt.Printf("%d\n", mappedValue) # => 246
+fmt.Printf("%d\n", mappedValue) // => 246
 ```
+
+```go
+none := optional.None[int]()
+fmt.Printf("%v\n", none.IsSome()) // => false
+fmt.Printf("%v\n", none.IsNone()) // => true
+
+_, err := none.Take()
+fmt.Printf("err is nil: %v\n", err == nil) // => err is nil: false
+// the error must be `ErrNoneValueTaken`
+
+mapped := optional.Map(none, func (v int) int {
+    return v * 2
+})
+fmt.Printf("%v\n", mapped.IsNone()) // => true
+```
+
+and more detailed examples are [here](./option_test.go).
 
 ## Docs
 
 [![GoDoc](https://godoc.org/github.com/moznion/go-optional?status.svg)](https://godoc.org/github.com/moznion/go-optional)
-
-and examples are [here](./option_test.go).
 
 ## Current Status
 

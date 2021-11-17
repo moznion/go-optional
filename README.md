@@ -43,6 +43,10 @@ and more detailed examples are [here](./option_test.go).
 
 [![GoDoc](https://godoc.org/github.com/moznion/go-optional?status.svg)](https://godoc.org/github.com/moznion/go-optional)
 
+## Tips
+
+- it would be better to deal with an Option value as a non-pointer because if the Option value can accept nil it becomes worthless
+
 ## Current Status
 
 Currently (at the moment: Nov 18, 2021), go 1.18 has not been released yet, so if you'd like to try this, please use the tip runtime.  

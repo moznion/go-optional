@@ -39,6 +39,8 @@ fmt.Printf("%v\n", mapped.IsNone()) // => true
 
 and more detailed examples are [here](./examples_test.go).
 
+Also you can try this on The Go Playground for gotip: [https://gotipplay.golang.org/p/mWGdFIfcK8c](https://gotipplay.golang.org/p/mWGdFIfcK8c)
+
 ## Docs
 
 [![GoDoc](https://godoc.org/github.com/moznion/go-optional?status.svg)](https://godoc.org/github.com/moznion/go-optional)
@@ -54,7 +56,7 @@ Of course, the new runtime version hasn't been released yet so this library has 
 
 ## Known Issues
 
-The runtime raises a compile error like "methods cannot have type parameters", so `Map()`, `MapOr()`, `Zip()` and `ZipWith()` has been providing as functions. Basically, it would be better to provide them as the methods, but currently, it compromises with the limitation.
+The runtime raises a compile error like "methods cannot have type parameters", so `Map()`, `MapOr()`, `Zip()`, `ZipWith()`, `Unzip()` and `UnzipWith()` have been providing as functions. Basically, it would be better to provide them as the methods, but currently, it compromises with the limitation.
 
 ## Author
 

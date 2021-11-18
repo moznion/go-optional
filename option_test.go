@@ -138,6 +138,43 @@ func TestZipWith(t *testing.T) {
 	}).IsNone())
 }
 
+func TestUnzip(t *testing.T) {
+	pair := Pair[int, string]{
+		Value1: 123,
+		Value2: "foo",
+	}
+
+	o1, o2 := Unzip(Some[Pair[int, string]](pair))
+	assert.Equal(t, 123, o1.TakeOr(0))
+	assert.Equal(t, "foo", o2.TakeOr(""))
+
+	o1, o2 = Unzip(None[Pair[int, string]]())
+	assert.True(t, o1.IsNone())
+	assert.True(t, o2.IsNone())
+}
+
+func TestUnzipWith(t *testing.T) {
+	type Data struct {
+		A string
+		B int
+	}
+
+	unzipper := func (d Data) (string, int) {
+		return d.A, d.B
+	}
+
+	o1, o2 := UnzipWith(Some[Data](Data{
+		A: "foo",
+		B: 123,
+	}), unzipper)
+	assert.Equal(t, "foo", o1.TakeOr(""))
+	assert.Equal(t, 123, o2.TakeOr(0))
+
+	o1, o2 = UnzipWith(None[Data](), unzipper)
+	assert.True(t, o1.IsNone())
+	assert.True(t, o2.IsNone())
+}
+
 func ExampleOption_IsNone() {
 	some := Some[int](1)
 	fmt.Printf("%v\n", some.IsNone())
@@ -321,6 +358,59 @@ func ExampleZipWith() {
 	// err is nil => true
 	// 1 foo
 	// is none => true
+	// is none => true
+	// is none => true
+}
+
+func ExampleUnzip() {
+	// see also ExampleZip()
+
+	pair := Pair[int, string]{
+		Value1: 123,
+		Value2: "foo",
+	}
+
+	o1, o2 := Unzip(Some[Pair[int, string]](pair))
+	fmt.Printf("%d\n", o1.TakeOr(0))
+	fmt.Printf("%s\n", o2.TakeOr(""))
+
+	o1, o2 = Unzip(None[Pair[int, string]]())
+	fmt.Printf("is none => %v\n", o1.IsNone())
+	fmt.Printf("is none => %v\n", o2.IsNone())
+
+	// Output:
+	// 123
+	// foo
+	// is none => true
+	// is none => true
+}
+
+func ExampleUnzipWith() {
+	// see also ExampleZipWith()
+
+	type Data struct {
+		A int
+		B string
+	}
+
+	unzipper := func (d Data) (int, string) {
+		return d.A, d.B
+	}
+
+	o1, o2 := UnzipWith(Some[Data](Data{
+		A: 123,
+		B: "foo",
+	}), unzipper)
+	fmt.Printf("%d\n", o1.TakeOr(0))
+	fmt.Printf("%s\n", o2.TakeOr(""))
+
+	o1, o2 = UnzipWith(None[Data](), unzipper)
+	fmt.Printf("is none => %v\n", o1.IsNone())
+	fmt.Printf("is none => %v\n", o2.IsNone())
+
+	// Output:
+	// 123
+	// foo
 	// is none => true
 	// is none => true
 }

@@ -67,7 +67,7 @@ func (o Option[T]) TakeOrElse(fallbackFunc func () T) T {
 
 // Filter returns self if the Option has a value and the value matches the condition of the predicate function.
 // In other cases (i.e. it doesn't match with the predicate or the Option is None), this returns None value.
-func (o Option[T]) Filter(predicate func(v T) bool) Option[T] {
+func (o Option[T]) Filter(predicate func (v T) bool) Option[T] {
 	if o.IsNone() {
 		return None[T]()
 	}
@@ -80,7 +80,7 @@ func (o Option[T]) Filter(predicate func(v T) bool) Option[T] {
 
 // Map converts the Option value to another value according to the mapper function.
 // If Option value is None, this also returns None.
-func Map[T, U any](option Option[T], mapper func(v T) U) Option[U] {
+func Map[T, U any](option Option[T], mapper func (v T) U) Option[U] {
 	if option.IsNone() {
 		return None[U]()
 	}
@@ -90,7 +90,7 @@ func Map[T, U any](option Option[T], mapper func(v T) U) Option[U] {
 
 // MapOr converts t	he Option value to another value according to the mapper function.
 // If Option value is None, this returns fallbackValue.
-func MapOr[T, U any](option Option[T], fallbackValue U, mapper func(v T) U) U {
+func MapOr[T, U any](option Option[T], fallbackValue U, mapper func (v T) U) U {
 	if option.IsNone() {
 		return fallbackValue
 	}
@@ -118,9 +118,31 @@ func Zip[T, U any](opt1 Option[T], opt2 Option[U]) Option[Pair[T, U]] {
 
 // ZipWith zips two Options into a typed value according to the zipper function.
 // If either one of the Options is None, this also returns None.
-func ZipWith[T, U, V any](opt1 Option[T], opt2 Option[U], zipper func(opt1 T, opt2 U) V) Option[V] {
+func ZipWith[T, U, V any](opt1 Option[T], opt2 Option[U], zipper func (opt1 T, opt2 U) V) Option[V] {
 	if opt1.IsSome() && opt2.IsSome() {
 		return Some[V](zipper(opt1.value, opt2.value))
 	}
 	return None[V]()
+}
+
+// Unzip extracts the values from a Pair and pack them into each Option value.
+// If the given zipped value is None, this returns None for all return values.
+func Unzip[T, U any](zipped Option[Pair[T, U]]) (Option[T], Option[U]) {
+	if zipped.IsNone() {
+		return None[T](), None[U]()
+	}
+
+	pair := zipped.value
+	return Some[T](pair.Value1), Some[U](pair.Value2)
+}
+
+// UnzipWith extracts the values from the given value according to the unzipper function and pack the into each Option value.
+// If the given zipped value is None, this returns None for all return values.
+func UnzipWith[T, U, V any](zipped Option[V], unzipper func (zipped V) (T, U)) (Option[T], Option[U]) {
+	if zipped.IsNone() {
+		return None[T](), None[U]()
+	}
+
+	v1, v2 := unzipper(zipped.value)
+	return Some[T](v1), Some[U](v2)
 }

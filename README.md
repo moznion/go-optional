@@ -37,7 +37,7 @@ mapped := optional.Map(none, func (v int) int {
 fmt.Printf("%v\n", mapped.IsNone()) // => true
 ```
 
-and more detailed examples are [here](./option_test.go).
+and more detailed examples are [here](./examples_test.go).
 
 ## Docs
 

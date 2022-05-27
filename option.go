@@ -85,7 +85,7 @@ func Map[T, U any](option Option[T], mapper func(v T) U) Option[U] {
 		return None[U]()
 	}
 
-	return Some[U](mapper(option.value))
+	return Some(mapper(option.value))
 }
 
 // MapOr converts given Option value to another *actual* value according to the mapper function.
@@ -132,7 +132,7 @@ type Pair[T, U any] struct {
 // If either one of the Options is None, this also returns None.
 func Zip[T, U any](opt1 Option[T], opt2 Option[U]) Option[Pair[T, U]] {
 	if opt1.IsSome() && opt2.IsSome() {
-		return Some[Pair[T, U]](Pair[T, U]{
+		return Some(Pair[T, U]{
 			Value1: opt1.value,
 			Value2: opt2.value,
 		})
@@ -145,7 +145,7 @@ func Zip[T, U any](opt1 Option[T], opt2 Option[U]) Option[Pair[T, U]] {
 // If either one of the Options is None, this also returns None.
 func ZipWith[T, U, V any](opt1 Option[T], opt2 Option[U], zipper func(opt1 T, opt2 U) V) Option[V] {
 	if opt1.IsSome() && opt2.IsSome() {
-		return Some[V](zipper(opt1.value, opt2.value))
+		return Some(zipper(opt1.value, opt2.value))
 	}
 	return None[V]()
 }
@@ -158,7 +158,7 @@ func Unzip[T, U any](zipped Option[Pair[T, U]]) (Option[T], Option[U]) {
 	}
 
 	pair := zipped.value
-	return Some[T](pair.Value1), Some[U](pair.Value2)
+	return Some(pair.Value1), Some(pair.Value2)
 }
 
 // UnzipWith extracts the values from the given value according to the unzipper function and pack the into each Option value.
@@ -169,5 +169,5 @@ func UnzipWith[T, U, V any](zipped Option[V], unzipper func(zipped V) (T, U)) (O
 	}
 
 	v1, v2 := unzipper(zipped.value)
-	return Some[T](v1), Some[U](v2)
+	return Some(v1), Some(v2)
 }

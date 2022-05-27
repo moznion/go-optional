@@ -56,7 +56,7 @@ Of course, the new runtime version hasn't been released yet so this library has 
 
 ## Known Issues
 
-The runtime raises a compile error like "methods cannot have type parameters", so `Map()`, `MapOr()`, `Zip()`, `ZipWith()`, `Unzip()` and `UnzipWith()` have been providing as functions. Basically, it would be better to provide them as the methods, but currently, it compromises with the limitation.
+The runtime raises a compile error like "methods cannot have type parameters", so `Map()`, `MapOr()`, `MapWithError()`, `MapOrWithError()`, `Zip()`, `ZipWith()`, `Unzip()` and `UnzipWith()` have been providing as functions. Basically, it would be better to provide them as the methods, but currently, it compromises with the limitation.
 
 ## Author
 

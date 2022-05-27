@@ -1,6 +1,9 @@
 package optional
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 func ExampleOption_IsNone() {
 	some := Some[int](1)
@@ -54,13 +57,13 @@ func ExampleOption_TakeOr() {
 
 func ExampleOption_TakeOrElse() {
 	some := Some[int](1)
-	v := some.TakeOrElse(func () int {
+	v := some.TakeOrElse(func() int {
 		return 666
 	})
 	fmt.Printf("%d\n", v)
 
 	none := None[int]()
-	v = none.TakeOrElse(func () int {
+	v = none.TakeOrElse(func() int {
 		return 666
 	})
 	fmt.Printf("%d\n", v)
@@ -71,8 +74,8 @@ func ExampleOption_TakeOrElse() {
 }
 
 func ExampleOption_Filter() {
-	isEven := func (v int) bool {
-		return v % 2 == 0
+	isEven := func(v int) bool {
+		return v%2 == 0
 	}
 
 	some := Some[int](2)
@@ -94,7 +97,7 @@ func ExampleOption_Filter() {
 }
 
 func ExampleMap() {
-	mapper := func (v int) string {
+	mapper := func(v int) string {
 		return fmt.Sprintf("%d", v)
 	}
 
@@ -112,7 +115,7 @@ func ExampleMap() {
 }
 
 func ExampleMapOr() {
-	mapper := func (v int) string {
+	mapper := func(v int) string {
 		return fmt.Sprintf("%d", v)
 	}
 
@@ -160,7 +163,7 @@ func ExampleZipWith() {
 		B string
 	}
 
-	zipper := func (v1 int, v2 string) Data {
+	zipper := func(v1 int, v2 string) Data {
 		return Data{
 			A: v1,
 			B: v2,
@@ -220,7 +223,7 @@ func ExampleUnzipWith() {
 		B string
 	}
 
-	unzipper := func (d Data) (int, string) {
+	unzipper := func(d Data) (int, string) {
 		return d.A, d.B
 	}
 
@@ -240,4 +243,65 @@ func ExampleUnzipWith() {
 	// foo
 	// is none => true
 	// is none => true
+}
+
+func ExampleMapWithError() {
+	mapperWithNoError := func(v int) (string, error) {
+		return fmt.Sprintf("%d", v), nil
+	}
+
+	some := Some[int](1)
+	opt, err := MapWithError(some, mapperWithNoError)
+	fmt.Printf("err is nil: %v\n", err == nil)
+	fmt.Printf("%s\n", opt.TakeOr("N/A"))
+
+	none := None[int]()
+	opt, err = MapWithError(none, mapperWithNoError)
+	fmt.Printf("err is nil: %v\n", err == nil)
+	fmt.Printf("%s\n", opt.TakeOr("N/A"))
+
+	mapperWithError := func(v int) (string, error) {
+		return "", errors.New("something wrong")
+	}
+	opt, err = MapWithError(some, mapperWithError)
+	fmt.Printf("err is nil: %v\n", err == nil)
+	fmt.Printf("%s\n", opt.TakeOr("N/A"))
+
+	// Output:
+	// err is nil: true
+	// 1
+	// err is nil: true
+	// N/A
+	// err is nil: false
+	// N/A
+}
+
+func ExampleMapOrWithError() {
+	mapperWithNoError := func(v int) (string, error) {
+		return fmt.Sprintf("%d", v), nil
+	}
+
+	some := Some[int](1)
+	mapped, err := MapOrWithError(some, "N/A", mapperWithNoError)
+	fmt.Printf("err is nil: %v\n", err == nil)
+	fmt.Printf("%s\n", mapped)
+
+	none := None[int]()
+	mapped, err = MapOrWithError(none, "N/A", mapperWithNoError)
+	fmt.Printf("err is nil: %v\n", err == nil)
+	fmt.Printf("%s\n", mapped)
+
+	mapperWithError := func(v int) (string, error) {
+		return "<ignore-me>", errors.New("something wrong")
+	}
+	mapped, err = MapOrWithError(some, "N/A", mapperWithError)
+	fmt.Printf("err is nil: %v\n", err == nil)
+	fmt.Printf("%s\n", mapped)
+	// Output:
+	// err is nil: true
+	// 1
+	// err is nil: true
+	// N/A
+	// err is nil: false
+	// <ignore-me>
 }

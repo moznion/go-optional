@@ -1,6 +1,7 @@
 package optional
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -36,20 +37,20 @@ func TestOption_TakeOr(t *testing.T) {
 }
 
 func TestOption_TakeOrElse(t *testing.T) {
-	v := Some[int](123).TakeOrElse(func () int {
+	v := Some[int](123).TakeOrElse(func() int {
 		return 666
 	})
 	assert.Equal(t, 123, v)
 
-	v = None[int]().TakeOrElse(func () int {
+	v = None[int]().TakeOrElse(func() int {
 		return 666
 	})
 	assert.Equal(t, 666, v)
 }
 
 func TestOption_Filter(t *testing.T) {
-	isEven := func (v int) bool {
-		return v % 2 == 0
+	isEven := func(v int) bool {
+		return v%2 == 0
 	}
 
 	o := Some[int](2).Filter(isEven)
@@ -118,7 +119,7 @@ func TestZipWith(t *testing.T) {
 	some1 := Some[int](123)
 	some2 := Some[string]("foo")
 
-	zipped := ZipWith(some1, some2, func (v1 int, v2 string) Data {
+	zipped := ZipWith(some1, some2, func(v1 int, v2 string) Data {
 		return Data{
 			A: v2,
 			B: v1,
@@ -130,10 +131,10 @@ func TestZipWith(t *testing.T) {
 		B: 123,
 	}, zipped.value)
 
-	assert.True(t, ZipWith(None[int](), some1, func (v1, v2 int) Data {
+	assert.True(t, ZipWith(None[int](), some1, func(v1, v2 int) Data {
 		return Data{}
 	}).IsNone())
-	assert.True(t, ZipWith(some1, None[int](), func (v1, v2 int) Data {
+	assert.True(t, ZipWith(some1, None[int](), func(v1, v2 int) Data {
 		return Data{}
 	}).IsNone())
 }
@@ -159,7 +160,7 @@ func TestUnzipWith(t *testing.T) {
 		B int
 	}
 
-	unzipper := func (d Data) (string, int) {
+	unzipper := func(d Data) (string, int) {
 		return d.A, d.B
 	}
 
@@ -173,4 +174,52 @@ func TestUnzipWith(t *testing.T) {
 	o1, o2 = UnzipWith(None[Data](), unzipper)
 	assert.True(t, o1.IsNone())
 	assert.True(t, o2.IsNone())
+}
+
+func TestMapWithError(t *testing.T) {
+	some := Some[int](123)
+	mapped, err := MapWithError(some, func(v int) (string, error) {
+		return fmt.Sprintf("%d", v), nil
+	})
+	assert.NoError(t, err)
+	taken, err := mapped.Take()
+	assert.NoError(t, err)
+	assert.Equal(t, "123", taken)
+
+	none := None[int]()
+	mapped, err = MapWithError(none, func(v int) (string, error) {
+		return fmt.Sprintf("%d", v), nil
+	})
+	assert.NoError(t, err)
+	assert.True(t, mapped.IsNone())
+
+	mapperError := errors.New("mapper error")
+	mapped, err = MapWithError(some, func(v int) (string, error) {
+		return "", mapperError
+	})
+	assert.ErrorIs(t, err, mapperError)
+	assert.True(t, mapped.IsNone())
+}
+
+func TestMapOrWithError(t *testing.T) {
+	some := Some[int](123)
+	mapped, err := MapOrWithError(some, "666", func(v int) (string, error) {
+		return fmt.Sprintf("%d", v), nil
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, "123", mapped)
+
+	none := None[int]()
+	mapped, err = MapOrWithError(none, "666", func(v int) (string, error) {
+		return fmt.Sprintf("%d", v), nil
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, "666", mapped)
+
+	mapperError := errors.New("mapper error")
+	mapped, err = MapOrWithError(some, "666", func(v int) (string, error) {
+		return "", mapperError
+	})
+	assert.ErrorIs(t, err, mapperError)
+	assert.Equal(t, "", mapped)
 }

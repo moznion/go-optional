@@ -9,14 +9,14 @@ var (
 
 // Option is a data type that must be Some (i.e. having a value) or None (i.e. doesn't have a value).
 type Option[T any] struct {
-	value T
+	value  T
 	exists *struct{}
 }
 
 // Some is a function to make a Option type instance with the actual value.
 func Some[T any](value T) Option[T] {
 	return Option[T]{
-		value: value,
+		value:  value,
 		exists: &struct{}{},
 	}
 }
@@ -58,7 +58,7 @@ func (o Option[T]) TakeOr(fallbackValue T) T {
 
 // TakeOrElse returns the actual value if the Option has a value.
 // On the other hand, this executes fallbackFunc and returns the result value of that function.
-func (o Option[T]) TakeOrElse(fallbackFunc func () T) T {
+func (o Option[T]) TakeOrElse(fallbackFunc func() T) T {
 	if o.IsNone() {
 		return fallbackFunc()
 	}
@@ -67,7 +67,7 @@ func (o Option[T]) TakeOrElse(fallbackFunc func () T) T {
 
 // Filter returns self if the Option has a value and the value matches the condition of the predicate function.
 // In other cases (i.e. it doesn't match with the predicate or the Option is None), this returns None value.
-func (o Option[T]) Filter(predicate func (v T) bool) Option[T] {
+func (o Option[T]) Filter(predicate func(v T) bool) Option[T] {
 	if o.IsNone() {
 		return None[T]()
 	}
@@ -78,9 +78,9 @@ func (o Option[T]) Filter(predicate func (v T) bool) Option[T] {
 	return None[T]()
 }
 
-// Map converts the Option value to another value according to the mapper function.
-// If Option value is None, this also returns None.
-func Map[T, U any](option Option[T], mapper func (v T) U) Option[U] {
+// Map converts given Option value to another Option value according to the mapper function.
+// If given Option value is None, this also returns None.
+func Map[T, U any](option Option[T], mapper func(v T) U) Option[U] {
 	if option.IsNone() {
 		return None[U]()
 	}
@@ -88,11 +88,36 @@ func Map[T, U any](option Option[T], mapper func (v T) U) Option[U] {
 	return Some[U](mapper(option.value))
 }
 
-// MapOr converts t	he Option value to another value according to the mapper function.
-// If Option value is None, this returns fallbackValue.
-func MapOr[T, U any](option Option[T], fallbackValue U, mapper func (v T) U) U {
+// MapOr converts given Option value to another *actual* value according to the mapper function.
+// If given Option value is None, this returns fallbackValue.
+func MapOr[T, U any](option Option[T], fallbackValue U, mapper func(v T) U) U {
 	if option.IsNone() {
 		return fallbackValue
+	}
+	return mapper(option.value)
+}
+
+// MapWithError converts given Option value to another Option value according to the mapper function that has the ability to return the value with an error.
+// If given Option value is None, this returns (None, nil). Else if the mapper returns an error then this returns (None, error).
+// Unless of them, i.e. given Option value is Some and the mapper doesn't return the error, this returns (Some[U], nil).
+func MapWithError[T, U any](option Option[T], mapper func(v T) (U, error)) (Option[U], error) {
+	if option.IsNone() {
+		return None[U](), nil
+	}
+
+	u, err := mapper(option.value)
+	if err != nil {
+		return None[U](), err
+	}
+	return Some(u), nil
+}
+
+// MapOrWithError converts given Option value to another *actual* value according to the mapper function that has the ability to return the value with an error.
+// If given Option value is None, this returns (fallbackValue, nil). Else if the mapper returns an error then returns (_, error).
+// Unless of them, i.e. given Option value is Some and the mapper doesn't return the error, this returns (U, nil).
+func MapOrWithError[T, U any](option Option[T], fallbackValue U, mapper func(v T) (U, error)) (U, error) {
+	if option.IsNone() {
+		return fallbackValue, nil
 	}
 	return mapper(option.value)
 }
@@ -118,7 +143,7 @@ func Zip[T, U any](opt1 Option[T], opt2 Option[U]) Option[Pair[T, U]] {
 
 // ZipWith zips two Options into a typed value according to the zipper function.
 // If either one of the Options is None, this also returns None.
-func ZipWith[T, U, V any](opt1 Option[T], opt2 Option[U], zipper func (opt1 T, opt2 U) V) Option[V] {
+func ZipWith[T, U, V any](opt1 Option[T], opt2 Option[U], zipper func(opt1 T, opt2 U) V) Option[V] {
 	if opt1.IsSome() && opt2.IsSome() {
 		return Some[V](zipper(opt1.value, opt2.value))
 	}
@@ -138,7 +163,7 @@ func Unzip[T, U any](zipped Option[Pair[T, U]]) (Option[T], Option[U]) {
 
 // UnzipWith extracts the values from the given value according to the unzipper function and pack the into each Option value.
 // If the given zipped value is None, this returns None for all return values.
-func UnzipWith[T, U, V any](zipped Option[V], unzipper func (zipped V) (T, U)) (Option[T], Option[U]) {
+func UnzipWith[T, U, V any](zipped Option[V], unzipper func(zipped V) (T, U)) (Option[T], Option[U]) {
 	if zipped.IsNone() {
 		return None[T](), None[U]()
 	}

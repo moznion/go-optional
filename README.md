@@ -1,4 +1,4 @@
-# go-optional [![.github/workflows/check.yml](https://github.com/moznion/go-optional/actions/workflows/check.yml/badge.svg)](https://github.com/moznion/go-optional/actions/workflows/check.yml) [![codecov](https://codecov.io/gh/moznion/go-optional/branch/main/graph/badge.svg?token=0HCVy6COy4)](https://codecov.io/gh/moznion/go-optional)
+# go-optional [![.github/workflows/check.yml](https://github.com/moznion/go-optional/actions/workflows/check.yml/badge.svg)](https://github.com/moznion/go-optional/actions/workflows/check.yml) [![codecov](https://codecov.io/gh/moznion/go-optional/branch/main/graph/badge.svg?token=0HCVy6COy4)](https://codecov.io/gh/moznion/go-optional) [![GoDoc](https://godoc.org/github.com/moznion/go-optional?status.svg)](https://godoc.org/github.com/moznion/go-optional)
 
 A library that provides [Go Generics](https://go.dev/blog/generics-proposal) friendly "optional" features.
 
@@ -37,9 +37,7 @@ mapped := optional.Map(none, func (v int) int {
 fmt.Printf("%v\n", mapped.IsNone()) // => true
 ```
 
-and more detailed examples are [here](./examples_test.go).
-
-Also you can try this on The Go Playground for gotip: [https://gotipplay.golang.org/p/mWGdFIfcK8c](https://gotipplay.golang.org/p/mWGdFIfcK8c)
+and more detailed examples are here: [./examples_test.go](./examples_test.go).
 
 ## Docs
 
@@ -48,11 +46,6 @@ Also you can try this on The Go Playground for gotip: [https://gotipplay.golang.
 ## Tips
 
 - it would be better to deal with an Option value as a non-pointer because if the Option value can accept nil it becomes worthless
-
-## Current Status
-
-Currently (at the moment: Nov 18, 2021), go 1.18 has not been released yet, so if you'd like to try this, please use the tip runtime.  
-Of course, the new runtime version hasn't been released yet so this library has the possibility to change the implementation as well.
 
 ## Known Issues
 

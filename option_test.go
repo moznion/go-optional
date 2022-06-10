@@ -223,3 +223,65 @@ func TestMapOrWithError(t *testing.T) {
 	assert.ErrorIs(t, err, mapperError)
 	assert.Equal(t, "", mapped)
 }
+
+func TestOption_IfSome(t *testing.T) {
+	callingValue := ""
+	Some("foo").IfSome(func(s string) {
+		callingValue = s
+	})
+	assert.Equal(t, "foo", callingValue)
+
+	callingValue = ""
+	None[string]().IfSome(func(s string) {
+		callingValue = s
+	})
+	assert.Equal(t, "", callingValue)
+}
+
+func TestOption_IfSomeWithError(t *testing.T) {
+	err := Some("foo").IfSomeWithError(func(s string) error {
+		return nil
+	})
+	assert.NoError(t, err)
+
+	err = Some("foo").IfSomeWithError(func(s string) error {
+		return errors.New(s)
+	})
+	assert.EqualError(t, err, "foo")
+
+	err = None[string]().IfSomeWithError(func(s string) error {
+		return errors.New(s)
+	})
+	assert.NoError(t, err)
+}
+
+func TestOption_IfNone(t *testing.T) {
+	called := false
+	None[string]().IfNone(func() {
+		called = true
+	})
+	assert.True(t, called)
+
+	called = false
+	Some("string").IfNone(func() {
+		called = true
+	})
+	assert.False(t, called)
+}
+
+func TestOption_IfNoneWithError(t *testing.T) {
+	err := None[string]().IfNoneWithError(func() error {
+		return nil
+	})
+	assert.NoError(t, err)
+
+	err = None[string]().IfNoneWithError(func() error {
+		return errors.New("err")
+	})
+	assert.EqualError(t, err, "err")
+
+	err = Some("foo").IfNoneWithError(func() error {
+		return errors.New("err")
+	})
+	assert.NoError(t, err)
+}

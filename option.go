@@ -78,6 +78,40 @@ func (o Option[T]) Filter(predicate func(v T) bool) Option[T] {
 	return None[T]()
 }
 
+// IfSome calls given function with the value of Option if the receiver value is Some.
+func (o Option[T]) IfSome(f func(v T)) {
+	if o.IsNone() {
+		return
+	}
+	f(o.value)
+}
+
+// IfSomeWithError calls given function with the value of Option if the receiver value is Some.
+// This method propagates the error of given function, and if the receiver value is None, this returns nil error.
+func (o Option[T]) IfSomeWithError(f func(v T) error) error {
+	if o.IsNone() {
+		return nil
+	}
+	return f(o.value)
+}
+
+// IfNone calls given function if the receiver value is None.
+func (o Option[T]) IfNone(f func()) {
+	if o.IsSome() {
+		return
+	}
+	f()
+}
+
+// IfNoneWithError calls given function if the receiver value is None.
+// This method propagates the error of given function, and if the receiver value is Some, this returns nil error.
+func (o Option[T]) IfNoneWithError(f func() error) error {
+	if o.IsSome() {
+		return nil
+	}
+	return f()
+}
+
 // Map converts given Option value to another Option value according to the mapper function.
 // If given Option value is None, this also returns None.
 func Map[T, U any](option Option[T], mapper func(v T) U) Option[U] {

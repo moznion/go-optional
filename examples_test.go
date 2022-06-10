@@ -96,6 +96,92 @@ func ExampleOption_Filter() {
 	// 0
 }
 
+func ExampleOption_IfSome() {
+	Some("foo").IfSome(func(val string) {
+		fmt.Println(val)
+	})
+
+	None[string]().IfSome(func(val string) {
+		fmt.Println("do not show this message")
+	})
+
+	// Output:
+	// foo
+}
+
+func ExampleOption_IfSomeWithError() {
+	err := Some("foo").IfSomeWithError(func(val string) error {
+		fmt.Println(val)
+		return nil
+	})
+	if err != nil {
+		fmt.Println(err) // no error
+	}
+
+	err = Some("bar").IfSomeWithError(func(val string) error {
+		fmt.Println(val)
+		return errors.New("^^^ error occurred")
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = None[string]().IfSomeWithError(func(val string) error {
+		return errors.New("do not show this error")
+	})
+	if err != nil {
+		fmt.Println(err) // must not show this error
+	}
+
+	// Output:
+	// foo
+	// bar
+	// ^^^ error occurred
+}
+
+func ExampleOption_IfNone() {
+	None[string]().IfNone(func() {
+		fmt.Println("value is none")
+	})
+
+	Some("foo").IfNone(func() {
+		fmt.Println("do not show this message")
+	})
+
+	// Output:
+	// value is none
+}
+
+func ExampleOption_IfNoneWithError() {
+	err := None[string]().IfNoneWithError(func() error {
+		fmt.Println("value is none")
+		return nil
+	})
+	if err != nil {
+		fmt.Println(err) // no error
+	}
+
+	err = None[string]().IfNoneWithError(func() error {
+		fmt.Println("value is none!!")
+		return errors.New("^^^ error occurred")
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = Some("foo").IfNoneWithError(func() error {
+		return errors.New("do not show this error")
+	})
+	if err != nil {
+		fmt.Println(err) // must not show this error
+	}
+
+	// Output:
+	// value is none
+	// value is none!!
+	// ^^^ error occurred
+}
+
 func ExampleMap() {
 	mapper := func(v int) string {
 		return fmt.Sprintf("%d", v)

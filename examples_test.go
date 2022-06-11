@@ -25,6 +25,16 @@ func ExampleOption_IsSome() {
 	// false
 }
 
+func ExampleOption_Unwrap() {
+	fmt.Printf("%v\n", Some[int](12345).Unwrap())
+	fmt.Printf("%v\n", None[int]().Unwrap())
+	fmt.Printf("%v\n", None[*int]().Unwrap())
+	// Output:
+	// 12345
+	// 0
+	// <nil>
+}
+
 func ExampleOption_Take() {
 	some := Some[int](1)
 	v, err := some.Take()

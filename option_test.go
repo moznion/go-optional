@@ -18,6 +18,12 @@ func TestOption_IsSome(t *testing.T) {
 	assert.True(t, Some[int](123).IsSome())
 }
 
+func TestOption_Unwrap(t *testing.T) {
+	assert.Equal(t, "foo", Some[string]("foo").Unwrap())
+	assert.Equal(t, "", None[string]().Unwrap())
+	assert.Nil(t, None[*string]().Unwrap())
+}
+
 func TestOption_Take(t *testing.T) {
 	v, err := Some[int](123).Take()
 	assert.NoError(t, err)

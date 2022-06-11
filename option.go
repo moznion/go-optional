@@ -36,6 +36,13 @@ func (o Option[T]) IsSome() bool {
 	return o.exists != nil
 }
 
+// Unwrap returns the value regardless of Some/None status.
+// If the Option value is Some, this method returns the actual value.
+// On the other hand, if the Option value is None, this method returns the *default* value according to the type.
+func (o Option[T]) Unwrap() T {
+	return o.value
+}
+
 // Take takes the contained value in Option.
 // If Option value is Some, this returns the value that is contained in Option.
 // On the other hand, this returns an ErrNoneValueTaken as the second return value.

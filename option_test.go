@@ -291,3 +291,81 @@ func TestOption_IfNoneWithError(t *testing.T) {
 	})
 	assert.NoError(t, err)
 }
+
+func TestFlatMap(t *testing.T) {
+	some := Some[int](123)
+	mapped := FlatMap(some, func(v int) Option[string] {
+		return Some[string](fmt.Sprintf("%d", v))
+	})
+	taken, err := mapped.Take()
+	assert.NoError(t, err)
+	assert.Equal(t, "123", taken)
+
+	none := None[int]()
+	mapped = FlatMap(none, func(v int) Option[string] {
+		return Some[string](fmt.Sprintf("%d", v))
+	})
+	assert.True(t, mapped.IsNone())
+}
+
+func TestFlatMapOr(t *testing.T) {
+	some := Some[int](123)
+	mapped := FlatMapOr(some, "666", func(v int) Option[string] {
+		return Some[string](fmt.Sprintf("%d", v))
+	})
+	assert.Equal(t, "123", mapped)
+
+	none := None[int]()
+	mapped = FlatMapOr(none, "666", func(v int) Option[string] {
+		return Some[string](fmt.Sprintf("%d", v))
+	})
+	assert.Equal(t, "666", mapped)
+}
+
+func TestFlatMapWithError(t *testing.T) {
+	some := Some[int](123)
+	mapped, err := FlatMapWithError(some, func(v int) (Option[string], error) {
+		return Some[string](fmt.Sprintf("%d", v)), nil
+	})
+	assert.NoError(t, err)
+	taken, err := mapped.Take()
+	assert.NoError(t, err)
+	assert.Equal(t, "123", taken)
+
+	none := None[int]()
+	mapped, err = FlatMapWithError(none, func(v int) (Option[string], error) {
+		return Some[string](fmt.Sprintf("%d", v)), nil
+	})
+	assert.NoError(t, err)
+	assert.True(t, mapped.IsNone())
+
+	mapperError := errors.New("mapper error")
+	mapped, err = FlatMapWithError(some, func(v int) (Option[string], error) {
+		return Some[string](""), mapperError
+	})
+	assert.ErrorIs(t, err, mapperError)
+	assert.True(t, mapped.IsNone())
+}
+
+func TestFlatMapOrWithError(t *testing.T) {
+	some := Some[int](123)
+	mapped, err := FlatMapOrWithError(some, "666", func(v int) (Option[string], error) {
+		return Some[string](fmt.Sprintf("%d", v)), nil
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, "123", mapped)
+
+	none := None[int]()
+	mapped, err = FlatMapOrWithError(none, "666", func(v int) (Option[string], error) {
+		return Some[string](fmt.Sprintf("%d", v)), nil
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, "666", mapped)
+
+	mapperError := errors.New("mapper error")
+	mapped, err = FlatMapOrWithError(some, "666", func(v int) (Option[string], error) {
+		return Some[string](""), mapperError
+	})
+	assert.ErrorIs(t, err, mapperError)
+	assert.Equal(t, "", mapped)
+}

@@ -1,6 +1,8 @@
 package optional
 
-import "errors"
+import (
+	"errors"
+)
 
 var (
 	// ErrNoneValueTaken represents the error that is raised when None value is taken.
@@ -161,6 +163,62 @@ func MapOrWithError[T, U any](option Option[T], fallbackValue U, mapper func(v T
 		return fallbackValue, nil
 	}
 	return mapper(option.value)
+}
+
+// FlatMap converts give Option value to another Option value according to the mapper function.
+// The difference from the Map is the mapper function returns an Option value instead of the bare value.
+// If given Option value is None, this also returns None.
+func FlatMap[T, U any](option Option[T], mapper func(v T) Option[U]) Option[U] {
+	if option.IsNone() {
+		return None[U]()
+	}
+
+	return mapper(option.value)
+}
+
+// FlatMapOr converts given Option value to another *actual* value according to the mapper function.
+// The difference from the MapOr is the mapper function returns an Option value instead of the bare value.
+// If given Option value is None or mapper function returns None, this returns fallbackValue.
+func FlatMapOr[T, U any](option Option[T], fallbackValue U, mapper func(v T) Option[U]) U {
+	if option.IsNone() {
+		return fallbackValue
+	}
+
+	return (mapper(option.value)).TakeOr(fallbackValue)
+}
+
+// FlatMapWithError converts given Option value to another Option value according to the mapper function that has the ability to return the value with an error.
+// The difference from the MapWithError is the mapper function returns an Option value instead of the bare value.
+// If given Option value is None, this returns (None, nil). Else if the mapper returns an error then this returns (None, error).
+// Unless of them, i.e. given Option value is Some and the mapper doesn't return the error, this returns (Some[U], nil).
+func FlatMapWithError[T, U any](option Option[T], mapper func(v T) (Option[U], error)) (Option[U], error) {
+	if option.IsNone() {
+		return None[U](), nil
+	}
+
+	mapped, err := mapper(option.value)
+	if err != nil {
+		return None[U](), err
+	}
+	return mapped, nil
+}
+
+// FlatMapOrWithError converts given Option value to another *actual* value according to the mapper function that has the ability to return the value with an error.
+// The difference from the MapOrWithError is the mapper function returns an Option value instead of the bare value.
+// If given Option value is None, this returns (fallbackValue, nil). Else if the mapper returns an error then returns ($zero_value_of_type, error).
+// Unless of them, i.e. given Option value is Some and the mapper doesn't return the error, this returns (U, nil).
+func FlatMapOrWithError[T, U any](option Option[T], fallbackValue U, mapper func(v T) (Option[U], error)) (U, error) {
+	if option.IsNone() {
+		return fallbackValue, nil
+	}
+
+	maybe, err := mapper(option.value)
+	if err != nil {
+		var zeroValue U
+		return zeroValue, err
+	}
+
+	return maybe.TakeOr(fallbackValue), nil
 }
 
 // Pair is a data type that represents a tuple that has two elements.

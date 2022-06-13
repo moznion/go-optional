@@ -393,6 +393,7 @@ func ExampleMapOrWithError() {
 	mapped, err = MapOrWithError(some, "N/A", mapperWithError)
 	fmt.Printf("err is nil: %v\n", err == nil)
 	fmt.Printf("%s\n", mapped)
+
 	// Output:
 	// err is nil: true
 	// 1
@@ -400,4 +401,102 @@ func ExampleMapOrWithError() {
 	// N/A
 	// err is nil: false
 	// <ignore-me>
+}
+
+func ExampleFlatMap() {
+	mapper := func(v int) Option[string] {
+		return Some[string](fmt.Sprintf("%d", v))
+	}
+
+	some := Some[int](1)
+	opt := FlatMap(some, mapper)
+	fmt.Printf("%s\n", opt.TakeOr("N/A"))
+
+	none := None[int]()
+	opt = FlatMap(none, mapper)
+	fmt.Printf("%s\n", opt.TakeOr("N/A"))
+
+	// Output:
+	// 1
+	// N/A
+}
+
+func ExampleFlatMapOr() {
+	mapper := func(v int) Option[string] {
+		return Some[string](fmt.Sprintf("%d", v))
+	}
+
+	some := Some[int](1)
+	mapped := FlatMapOr(some, "N/A", mapper)
+	fmt.Printf("%s\n", mapped)
+
+	none := None[int]()
+	mapped = FlatMapOr(none, "N/A", mapper)
+	fmt.Printf("%s\n", mapped)
+
+	// Output:
+	// 1
+	// N/A
+}
+
+func ExampleFlatMapWithError() {
+	mapperWithNoError := func(v int) (Option[string], error) {
+		return Some[string](fmt.Sprintf("%d", v)), nil
+	}
+
+	some := Some[int](1)
+	opt, err := FlatMapWithError(some, mapperWithNoError)
+	fmt.Printf("err is nil: %v\n", err == nil)
+	fmt.Printf("%s\n", opt.TakeOr("N/A"))
+
+	none := None[int]()
+	opt, err = FlatMapWithError(none, mapperWithNoError)
+	fmt.Printf("err is nil: %v\n", err == nil)
+	fmt.Printf("%s\n", opt.TakeOr("N/A"))
+
+	mapperWithError := func(v int) (Option[string], error) {
+		return Some[string](""), errors.New("something wrong")
+	}
+	opt, err = FlatMapWithError(some, mapperWithError)
+	fmt.Printf("err is nil: %v\n", err == nil)
+	fmt.Printf("%s\n", opt.TakeOr("N/A"))
+
+	// Output:
+	// err is nil: true
+	// 1
+	// err is nil: true
+	// N/A
+	// err is nil: false
+	// N/A
+}
+
+func ExampleFlatMapOrWithError() {
+	mapperWithNoError := func(v int) (Option[string], error) {
+		return Some[string](fmt.Sprintf("%d", v)), nil
+	}
+
+	some := Some[int](1)
+	mapped, err := FlatMapOrWithError(some, "N/A", mapperWithNoError)
+	fmt.Printf("err is nil: %v\n", err == nil)
+	fmt.Printf("%s\n", mapped)
+
+	none := None[int]()
+	mapped, err = FlatMapOrWithError(none, "N/A", mapperWithNoError)
+	fmt.Printf("err is nil: %v\n", err == nil)
+	fmt.Printf("%s\n", mapped)
+
+	mapperWithError := func(v int) (Option[string], error) {
+		return Some[string]("<ignore-me>"), errors.New("something wrong")
+	}
+	mapped, err = FlatMapOrWithError(some, "N/A", mapperWithError)
+	fmt.Printf("err is nil: %v\n", err == nil)
+	fmt.Printf("%s\n", mapped)
+
+	// Output:
+	// err is nil: true
+	// 1
+	// err is nil: true
+	// N/A
+	// err is nil: false
+	//
 }

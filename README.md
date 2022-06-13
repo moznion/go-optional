@@ -43,6 +43,32 @@ and more detailed examples are here: [./examples_test.go](./examples_test.go).
 
 [![GoDoc](https://godoc.org/github.com/moznion/go-optional?status.svg)](https://godoc.org/github.com/moznion/go-optional)
 
+### Supported Operations
+
+- [Option[T]#IsNone() bool](https://pkg.go.dev/github.com/moznion/go-optional#Option.IsNone)
+- [Option[T]#IsSome() bool](https://pkg.go.dev/github.com/moznion/go-optional#Option.IsSome)
+- [Option[T]#Unwrap() T](https://pkg.go.dev/github.com/moznion/go-optional#Option.Unwrap)
+- [Option[T]#Take() (T, error)](https://pkg.go.dev/github.com/moznion/go-optional#Option.Take)
+- [Option[T]#TakeOr(fallbackValue T) T](https://pkg.go.dev/github.com/moznion/go-optional#Option.TakeOr)
+- [Option[T]#TakeOrElse(fallbackFunc func() T) T](https://pkg.go.dev/github.com/moznion/go-optional#Option.TakeOrElse)
+- [Option[T]#Filter(predicate func(v T) bool) Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#Option.Filter)
+- [Option[T]#IfSome(f func(v T))](https://pkg.go.dev/github.com/moznion/go-optional#Option.IfSome)
+- [Option[T]#IfSomeWithError(f func(v T) error) error](https://pkg.go.dev/github.com/moznion/go-optional#Option.IfSomeWithError)
+- [Option[T]#IfNone(f func())](https://pkg.go.dev/github.com/moznion/go-optional#Option.IfNone)
+- [Option[T]#IfNoneWithError(f func() error) error](https://pkg.go.dev/github.com/moznion/go-optional#Option.IfNoneWithError)
+- [Option.Map[T, U any](option Option[T], mapper func(v T) U) Option[U]](https://pkg.go.dev/github.com/moznion/go-optional#Map)
+- [Option.MapOr[T, U any](option Option[T], fallbackValue U, mapper func(v T) U) U](https://pkg.go.dev/github.com/moznion/go-optional#MapOr)
+- [Option.MapWithError[T, U any](option Option[T], mapper func(v T) (U, error)) (Option[U], error)](https://pkg.go.dev/github.com/moznion/go-optional#MapWithError)
+- [Option.MapOrWithError[T, U any](option Option[T], fallbackValue U, mapper func(v T) (U, error)) (U, error)](https://pkg.go.dev/github.com/moznion/go-optional#MapOrWithError)
+- [Option.FlatMap[T, U any](option Option[T], mapper func(v T) Option[U]) Option[U]](https://pkg.go.dev/github.com/moznion/go-optional#FlatMap)
+- [Option.FlatMapOr[T, U any](option Option[T], fallbackValue U, mapper func(v T) Option[U]) U](https://pkg.go.dev/github.com/moznion/go-optional#FlatMapOr)
+- [Option.FlatMapWithError[T, U any](option Option[T], mapper func(v T) (Option[U], error)) (Option[U], error)](https://pkg.go.dev/github.com/moznion/go-optional#FlatMapWithError)
+- [Option.FlatMapOrWithError[T, U any](option Option[T], fallbackValue U, mapper func(v T) (Option[U], error)) (U, error)](https://pkg.go.dev/github.com/moznion/go-optional#FlatMapOrWithError)
+- [Option.Zip[T, U any](opt1 Option[T], opt2 Option[U]) Option[Pair[T, U]]](https://pkg.go.dev/github.com/moznion/go-optional#Zip)
+- [Option.ZipWith[T, U, V any](opt1 Option[T], opt2 Option[U], zipper func(opt1 T, opt2 U) V) Option[V]](https://pkg.go.dev/github.com/moznion/go-optional#ZipWith)
+- [Option.Unzip[T, U any](zipped Option[Pair[T, U]]) (Option[T], Option[U])](https://pkg.go.dev/github.com/moznion/go-optional#Unzip)
+- [Option.UnzipWith[T, U, V any](zipped Option[V], unzipper func(zipped V) (T, U)) (Option[T], Option[U])](https://pkg.go.dev/github.com/moznion/go-optional#UnzipWith)
+
 ## Tips
 
 - it would be better to deal with an Option value as a non-pointer because if the Option value can accept nil it becomes worthless

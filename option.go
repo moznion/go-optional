@@ -17,7 +17,7 @@ type Option[T any] struct {
 	exists *struct{}
 }
 
-// Some is a function to make a Option type instance with the actual value.
+// Some is a function to make an Option type instance with the actual value.
 func Some[T any](value T) Option[T] {
 	return Option[T]{
 		value:  value,
@@ -25,7 +25,7 @@ func Some[T any](value T) Option[T] {
 	}
 }
 
-// None is a function to make a Option type that doesn't have a value.
+// None is a function to make an Option type that doesn't have a value.
 func None[T any]() Option[T] {
 	return Option[T]{}
 }

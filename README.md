@@ -69,6 +69,62 @@ and more detailed examples are here: [./examples_test.go](./examples_test.go).
 - [Option.Unzip[T, U any](zipped Option[Pair[T, U]]) (Option[T], Option[U])](https://pkg.go.dev/github.com/moznion/go-optional#Unzip)
 - [Option.UnzipWith[T, U, V any](zipped Option[V], unzipper func(zipped V) (T, U)) (Option[T], Option[U])](https://pkg.go.dev/github.com/moznion/go-optional#UnzipWith)
 
+### JSON marshal/unmarshal support
+
+This `Option[T]` type supports JSON marshal and unmarshal.
+
+If the value wanted to marshal is `Some[T]` then it marshals that value into the JSON bytes simply, and in unmarshaling, if the given JSON string/bytes has the actual value on corresponded property, it unmarshals that value into `Some[T]` value.
+
+example:
+
+```go
+type JSONStruct struct {
+	Val Option[int] `json:"val"`
+}
+
+some := Some[int](123)
+jsonStruct := &JSONStruct{Val: some}
+
+marshal, err := json.Marshal(jsonStruct)
+if err != nil {
+	return err
+}
+fmt.Printf("%s\n", marshal) // => {"val":123}
+
+var unmarshalJSONStruct JSONStruct
+err = json.Unmarshal(marshal, &unmarshalJSONStruct)
+if err != nil {
+	return err
+}
+// unmarshalJSONStruct.Val == Some[int](123)
+```
+
+Elsewise, when the value is `None[T]`, the marshaller serializes that value as `null`. And if the unmarshaller gets the JSON `null` value on a property corresponding to the `Optional[T]` value, or the value of a property is missing, that deserializes that value as `None[T]`.
+
+example:
+
+```go
+type JSONStruct struct {
+	Val Option[int] `json:"val"`
+}
+
+some := None[int]()
+jsonStruct := &JSONStruct{Val: some}
+
+marshal, err := json.Marshal(jsonStruct)
+if err != nil {
+	return err
+}
+fmt.Printf("%s\n", marshal) // => {"val":null}
+
+var unmarshalJSONStruct JSONStruct
+err = json.Unmarshal(marshal, &unmarshalJSONStruct)
+if err != nil {
+	return err
+}
+// unmarshalJSONStruct.Val == None[int]()
+```
+
 ## Tips
 
 - it would be better to deal with an Option value as a non-pointer because if the Option value can accept nil it becomes worthless

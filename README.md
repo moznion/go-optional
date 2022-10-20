@@ -108,8 +108,8 @@ type JSONStruct struct {
 	Val Option[int] `json:"val"`
 }
 
-some := None[int]()
-jsonStruct := &JSONStruct{Val: some}
+none := None[int]()
+jsonStruct := &JSONStruct{Val: none}
 
 marshal, err := json.Marshal(jsonStruct)
 if err != nil {

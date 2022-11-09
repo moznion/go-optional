@@ -62,7 +62,7 @@ func TestOption_Filter(t *testing.T) {
 
 	o := Some[int](2).Filter(isEven)
 	assert.True(t, o.IsSome())
-	assert.Equal(t, 2, o.value)
+	assert.Equal(t, 2, o[value])
 
 	o = Some[int](1).Filter(isEven)
 	assert.True(t, o.IsNone())
@@ -111,7 +111,7 @@ func TestZip(t *testing.T) {
 	assert.Equal(t, Pair[int, string]{
 		Value1: 123,
 		Value2: "foo",
-	}, zipped.value)
+	}, zipped[value])
 
 	assert.True(t, Zip(none, some1).IsNone())
 	assert.True(t, Zip(some1, none).IsNone())
@@ -136,7 +136,7 @@ func TestZipWith(t *testing.T) {
 	assert.Equal(t, Data{
 		A: "foo",
 		B: 123,
-	}, zipped.value)
+	}, zipped[value])
 
 	assert.True(t, ZipWith(None[int](), some1, func(v1, v2 int) Data {
 		return Data{}
@@ -519,4 +519,17 @@ func TestOption_UnmarshalJSON_shouldReturnErrorWhenInvalidJSONStringInputHasCome
 	var unmarshalJSONStruct JSONStruct
 	err := json.Unmarshal([]byte(`{"val":"__STRING__"}`), &unmarshalJSONStruct)
 	assert.Error(t, err)
+}
+
+func TestOption_MarshalJSON_shouldHandleOmitemptyCorrectly(t *testing.T) {
+	type JSONStruct struct {
+		NormalVal    Option[string] `json:"normalVal"`
+		OmitemptyVal Option[string] `json:"omitemptyVal,omitempty"` // this should be omitted
+	}
+
+	none := None[string]()
+	jsonStruct := &JSONStruct{NormalVal: none, OmitemptyVal: none}
+	marshal, err := json.Marshal(jsonStruct)
+	assert.NoError(t, err)
+	assert.EqualValues(t, string(marshal), `{"normalVal":null}`)
 }

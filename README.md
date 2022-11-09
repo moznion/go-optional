@@ -125,6 +125,28 @@ if err != nil {
 // unmarshalJSONStruct.Val == None[int]()
 ```
 
+And this also supports `omitempty` option for JSON unmarshaling. If the value of the property is `None[T]` and that property has `omitempty` option, it omits that property.
+
+ref:
+
+> The "omitempty" option specifies that the field should be omitted from the encoding if the field has an empty value, defined as false, 0, a nil pointer, a nil interface value, and any empty array, slice, map, or string.
+> https://pkg.go.dev/encoding/json#Marshal
+
+example:
+
+```go
+type JSONStruct struct {
+	OmitemptyVal Option[string] `json:"omitemptyVal,omitempty"` // this should be omitted
+}
+
+jsonStruct := &JSONStruct{OmitemptyVal: None[string]()}
+marshal, err := json.Marshal(jsonStruct)
+if err != nil {
+	return err
+}
+fmt.Printf("%s\n", marshal) // => {}
+```
+
 ## Tips
 
 - it would be better to deal with an Option value as a non-pointer because if the Option value can accept nil it becomes worthless

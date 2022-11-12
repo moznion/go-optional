@@ -12,17 +12,37 @@ import (
 func TestOption_IsNone(t *testing.T) {
 	assert.True(t, None[int]().IsNone())
 	assert.False(t, Some[int](123).IsNone())
+
+	var nilValue Option[int] = nil
+	assert.True(t, nilValue.IsNone())
+
+	i := 0
+	assert.False(t, FromNillable[int](&i).IsNone())
+	assert.True(t, FromNillable[int](nil).IsNone())
 }
 
 func TestOption_IsSome(t *testing.T) {
 	assert.False(t, None[int]().IsSome())
 	assert.True(t, Some[int](123).IsSome())
+
+	var nilValue Option[int] = nil
+	assert.False(t, nilValue.IsSome())
+
+	i := 0
+	assert.True(t, FromNillable[int](&i).IsSome())
+	assert.False(t, FromNillable[int](nil).IsSome())
 }
 
 func TestOption_Unwrap(t *testing.T) {
 	assert.Equal(t, "foo", Some[string]("foo").Unwrap())
 	assert.Equal(t, "", None[string]().Unwrap())
 	assert.Nil(t, None[*string]().Unwrap())
+
+	i := 123
+	assert.Equal(t, i, FromNillable[int](&i).Unwrap())
+	assert.Equal(t, 0, FromNillable[int](nil).Unwrap())
+	assert.Equal(t, i, *PtrFromNillable[int](&i).Unwrap())
+	assert.Nil(t, PtrFromNillable[int](nil).Unwrap())
 }
 
 func TestOption_Take(t *testing.T) {

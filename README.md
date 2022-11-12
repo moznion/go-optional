@@ -47,10 +47,10 @@ and more detailed examples are here: [./examples_test.go](./examples_test.go).
 
 #### Value Factory Methods
 
-- [Some[T]() Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#Some)
-- [None[T]() Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#None)
-- [FromNillable[T]() Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#FromNillable)
-- [PtrFromNillable[T]() Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#PtrFromNillable)
+- [Some[T]\() Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#Some)
+- [None[T]\() Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#None)
+- [FromNillable[T]\() Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#FromNillable)
+- [PtrFromNillable[T]\() Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#PtrFromNillable)
 
 #### Option value handler methods
 

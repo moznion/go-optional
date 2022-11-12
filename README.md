@@ -45,6 +45,15 @@ and more detailed examples are here: [./examples_test.go](./examples_test.go).
 
 ### Supported Operations
 
+#### Value Factory Methods
+
+- [Some[T]() Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#Some)
+- [None[T]() Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#None)
+- [FromNillable[T]() Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#FromNillable)
+- [PtrFromNillable[T]() Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#PtrFromNillable)
+
+#### Option value handler methods
+
 - [Option[T]#IsNone() bool](https://pkg.go.dev/github.com/moznion/go-optional#Option.IsNone)
 - [Option[T]#IsSome() bool](https://pkg.go.dev/github.com/moznion/go-optional#Option.IsSome)
 - [Option[T]#Unwrap() T](https://pkg.go.dev/github.com/moznion/go-optional#Option.Unwrap)
@@ -68,6 +77,16 @@ and more detailed examples are here: [./examples_test.go](./examples_test.go).
 - [Option.ZipWith[T, U, V any](opt1 Option[T], opt2 Option[U], zipper func(opt1 T, opt2 U) V) Option[V]](https://pkg.go.dev/github.com/moznion/go-optional#ZipWith)
 - [Option.Unzip[T, U any](zipped Option[Pair[T, U]]) (Option[T], Option[U])](https://pkg.go.dev/github.com/moznion/go-optional#Unzip)
 - [Option.UnzipWith[T, U, V any](zipped Option[V], unzipper func(zipped V) (T, U)) (Option[T], Option[U])](https://pkg.go.dev/github.com/moznion/go-optional#UnzipWith)
+
+### nil == None[T]
+
+This library deals with `nil` as same as `None[T]`. So it works with like the following example:
+
+```go
+var nilValue Option[int] = nil
+fmt.Printf("%v\n", nilValue.IsNone()) // => true
+fmt.Printf("%v\n", nilValue.IsSome()) // => false
+```
 
 ### JSON marshal/unmarshal support
 
@@ -146,10 +165,6 @@ if err != nil {
 }
 fmt.Printf("%s\n", marshal) // => {}
 ```
-
-## Tips
-
-- it would be better to deal with an Option value as a non-pointer because if the Option value can accept nil it becomes worthless
 
 ## Known Issues
 

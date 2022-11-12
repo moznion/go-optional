@@ -10,8 +10,28 @@ func ExampleOption_IsNone() {
 	fmt.Printf("%v\n", some.IsNone())
 	none := None[int]()
 	fmt.Printf("%v\n", none.IsNone())
+
+	num := 123
+	some = FromNillable[int](&num)
+	fmt.Printf("%v\n", some.IsNone())
+	none = FromNillable[int](nil)
+	fmt.Printf("%v\n", none.IsNone())
+
+	ptrSome := PtrFromNillable[int](&num)
+	fmt.Printf("%v\n", ptrSome.IsNone())
+	ptrNone := PtrFromNillable[int](nil)
+	fmt.Printf("%v\n", ptrNone.IsNone())
+
+	var nilValue Option[int] = nil
+	fmt.Printf("%v\n", nilValue.IsNone())
+
 	// Output:
 	// false
+	// true
+	// false
+	// true
+	// false
+	// true
 	// true
 }
 
@@ -20,8 +40,28 @@ func ExampleOption_IsSome() {
 	fmt.Printf("%v\n", some.IsSome())
 	none := None[int]()
 	fmt.Printf("%v\n", none.IsSome())
+
+	num := 123
+	some = FromNillable[int](&num)
+	fmt.Printf("%v\n", some.IsSome())
+	none = FromNillable[int](nil)
+	fmt.Printf("%v\n", none.IsSome())
+
+	ptrSome := PtrFromNillable[int](&num)
+	fmt.Printf("%v\n", ptrSome.IsSome())
+	ptrNone := PtrFromNillable[int](nil)
+	fmt.Printf("%v\n", ptrNone.IsSome())
+
+	var nilValue Option[int] = nil
+	fmt.Printf("%v\n", nilValue.IsSome())
+
 	// Output:
 	// true
+	// false
+	// true
+	// false
+	// true
+	// false
 	// false
 }
 
@@ -29,9 +69,19 @@ func ExampleOption_Unwrap() {
 	fmt.Printf("%v\n", Some[int](12345).Unwrap())
 	fmt.Printf("%v\n", None[int]().Unwrap())
 	fmt.Printf("%v\n", None[*int]().Unwrap())
+
+	num := 123
+	fmt.Printf("%v\n", FromNillable[int](&num).Unwrap())
+	fmt.Printf("%v\n", FromNillable[int](nil).Unwrap())
+	fmt.Printf("%v\n", *PtrFromNillable[int](&num).Unwrap()) // NOTE: this dereferences tha unwrapped value
+	fmt.Printf("%v\n", PtrFromNillable[int](nil).Unwrap())
 	// Output:
 	// 12345
 	// 0
+	// <nil>
+	// 123
+	// 0
+	// 123
 	// <nil>
 }
 

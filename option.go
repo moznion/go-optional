@@ -18,16 +18,37 @@ const (
 	value = iota
 )
 
-// Some is a function to make an Option type instance with the actual value.
+// Some is a function to make an Option type value with the actual value.
 func Some[T any](v T) Option[T] {
 	return Option[T]{
 		value: v,
 	}
 }
 
-// None is a function to make an Option type that doesn't have a value.
+// None is a function to make an Option type value that doesn't have a value.
 func None[T any]() Option[T] {
 	return nil
+}
+
+// FromNillable is a function to make an Option type value with the nillable value with value de-referencing.
+// If the given value is not nil, this returns Some[T] value. On the other hand, if the value is nil, this returns None[T].
+// This function does "dereference" for the value on packing that into Option value. If this value is not preferable, please consider using PtrFromNillable() instead.
+func FromNillable[T any](v *T) Option[T] {
+	if v == nil {
+		return None[T]()
+	}
+	return Some[T](*v)
+}
+
+// PtrFromNillable is a function to make an Option type value with the nillable value without value de-referencing.
+// If the given value is not nil, this returns Some[*T] value. On the other hand, if the value is nil, this returns None[*T].
+// This function doesn't "dereference" the value on packing that into the Option value; in other words, this puts the as-is pointer value into the Option envelope.
+// This behavior contrasts with the FromNillable() function's one.
+func PtrFromNillable[T any](v *T) Option[*T] {
+	if v == nil {
+		return None[*T]()
+	}
+	return Some[*T](v)
 }
 
 // IsNone returns whether the Option *doesn't* have a value or not.

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 )
 
 var (
@@ -142,6 +143,18 @@ func (o Option[T]) IfNoneWithError(f func() error) error {
 		return nil
 	}
 	return f()
+}
+
+func (o Option[T]) String() string {
+	if o.IsNone() {
+		return "None[]"
+	}
+
+	v := o.Unwrap()
+	if stringer, ok := interface{}(v).(fmt.Stringer); ok {
+		return fmt.Sprintf("Some[%s]", stringer)
+	}
+	return fmt.Sprintf("Some[%v]", v)
 }
 
 // Map converts given Option value to another Option value according to the mapper function.

@@ -553,3 +553,18 @@ func TestOption_MarshalJSON_shouldHandleOmitemptyCorrectly(t *testing.T) {
 	assert.NoError(t, err)
 	assert.EqualValues(t, string(marshal), `{"normalVal":null}`)
 }
+
+type MyStringer struct {
+}
+
+func (m *MyStringer) String() string {
+	return "mystr"
+}
+
+func TestOption_String(t *testing.T) {
+	assert.Equal(t, "Some[123]", Some[int](123).String())
+	assert.Equal(t, "None[]", None[int]().String())
+
+	assert.Equal(t, "Some[mystr]", Some[*MyStringer](&MyStringer{}).String())
+	assert.Equal(t, "None[]", None[*MyStringer]().String())
+}

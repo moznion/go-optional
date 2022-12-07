@@ -102,6 +102,15 @@ func (o Option[T]) TakeOrElse(fallbackFunc func() T) T {
 	return o[value]
 }
 
+// OrElse returns the Option value according to the actual value existence.
+// If the receiver's Option value is Some, this function pass-through that to return. Otherwise, this value returns the `fallbackOptionValue`.
+func (o Option[T]) OrElse(fallbackOptionValue Option[T]) Option[T] {
+	if o.IsNone() {
+		return fallbackOptionValue
+	}
+	return o
+}
+
 // Filter returns self if the Option has a value and the value matches the condition of the predicate function.
 // In other cases (i.e. it doesn't match with the predicate or the Option is None), this returns None value.
 func (o Option[T]) Filter(predicate func(v T) bool) Option[T] {

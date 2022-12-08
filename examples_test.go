@@ -564,3 +564,17 @@ func ExampleOption_Or() {
 	// Some[actual]
 	// Some[fallback]
 }
+
+func ExampleOption_OrElse() {
+	fallbackFunc := func() Option[string] { return Some[string]("fallback") }
+
+	some := Some[string]("actual")
+	fmt.Printf("%s\n", some.OrElse(fallbackFunc))
+
+	none := None[string]()
+	fmt.Printf("%s\n", none.OrElse(fallbackFunc))
+
+	// Output:
+	// Some[actual]
+	// Some[fallback]
+}

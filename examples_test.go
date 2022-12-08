@@ -551,14 +551,14 @@ func ExampleFlatMapOrWithError() {
 	//
 }
 
-func ExampleOption_OrElse() {
+func ExampleOption_Or() {
 	fallback := Some[string]("fallback")
 
 	some := Some[string]("actual")
-	fmt.Printf("%s\n", some.OrElse(fallback))
+	fmt.Printf("%s\n", some.Or(fallback))
 
 	none := None[string]()
-	fmt.Printf("%s\n", none.OrElse(fallback))
+	fmt.Printf("%s\n", none.Or(fallback))
 
 	// Output:
 	// Some[actual]

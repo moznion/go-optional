@@ -60,7 +60,7 @@ and more detailed examples are here: [./examples_test.go](./examples_test.go).
 - [Option[T]#Take() (T, error)](https://pkg.go.dev/github.com/moznion/go-optional#Option.Take)
 - [Option[T]#TakeOr(fallbackValue T) T](https://pkg.go.dev/github.com/moznion/go-optional#Option.TakeOr)
 - [Option[T]#TakeOrElse(fallbackFunc func() T) T](https://pkg.go.dev/github.com/moznion/go-optional#Option.TakeOrElse)
-- [Option[T]#OrElse(fallbackOptionValue Option[T]) Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#Option.OrElse)
+- [Option[T]#Or(fallbackOptionValue Option[T]) Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#Option.Or)
 - [Option[T]#Filter(predicate func(v T) bool) Option[T]](https://pkg.go.dev/github.com/moznion/go-optional#Option.Filter)
 - [Option[T]#IfSome(f func(v T))](https://pkg.go.dev/github.com/moznion/go-optional#Option.IfSome)
 - [Option[T]#IfSomeWithError(f func(v T) error) error](https://pkg.go.dev/github.com/moznion/go-optional#Option.IfSomeWithError)

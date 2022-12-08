@@ -102,9 +102,9 @@ func (o Option[T]) TakeOrElse(fallbackFunc func() T) T {
 	return o[value]
 }
 
-// OrElse returns the Option value according to the actual value existence.
+// Or returns the Option value according to the actual value existence.
 // If the receiver's Option value is Some, this function pass-through that to return. Otherwise, this value returns the `fallbackOptionValue`.
-func (o Option[T]) OrElse(fallbackOptionValue Option[T]) Option[T] {
+func (o Option[T]) Or(fallbackOptionValue Option[T]) Option[T] {
 	if o.IsNone() {
 		return fallbackOptionValue
 	}

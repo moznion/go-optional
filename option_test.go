@@ -569,9 +569,9 @@ func TestOption_String(t *testing.T) {
 	assert.Equal(t, "None[]", None[*MyStringer]().String())
 }
 
-func TestOption_OrElse(t *testing.T) {
+func TestOption_Or(t *testing.T) {
 	fallback := Some[string]("fallback")
 
-	assert.EqualValues(t, Some[string]("actual").OrElse(fallback).Unwrap(), "actual")
-	assert.EqualValues(t, None[string]().OrElse(fallback).Unwrap(), "fallback")
+	assert.EqualValues(t, Some[string]("actual").Or(fallback).Unwrap(), "actual")
+	assert.EqualValues(t, None[string]().Or(fallback).Unwrap(), "fallback")
 }

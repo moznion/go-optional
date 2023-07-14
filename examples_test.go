@@ -85,6 +85,26 @@ func ExampleOption_Unwrap() {
 	// <nil>
 }
 
+func ExampleOption_UnwrapAsPtr() {
+	fmt.Printf("%v\n", *Some[int](12345).UnwrapAsPtr())
+	fmt.Printf("%v\n", None[int]().UnwrapAsPtr())
+	fmt.Printf("%v\n", None[*int]().UnwrapAsPtr())
+
+	num := 123
+	fmt.Printf("%v\n", *FromNillable[int](&num).UnwrapAsPtr())
+	fmt.Printf("%v\n", FromNillable[int](nil).UnwrapAsPtr())
+	fmt.Printf("%v\n", **PtrFromNillable[int](&num).UnwrapAsPtr()) // NOTE: this dereferences tha unwrapped value
+	fmt.Printf("%v\n", PtrFromNillable[int](nil).UnwrapAsPtr())
+	// Output:
+	// 12345
+	// <nil>
+	// <nil>
+	// 123
+	// <nil>
+	// 123
+	// <nil>
+}
+
 func ExampleOption_Take() {
 	some := Some[int](1)
 	v, err := some.Take()

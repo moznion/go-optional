@@ -45,6 +45,21 @@ func TestOption_Unwrap(t *testing.T) {
 	assert.Nil(t, PtrFromNillable[int](nil).Unwrap())
 }
 
+func TestOption_UnwrapAsPointer(t *testing.T) {
+	str := "foo"
+	refStr := &str
+	assert.EqualValues(t, &str, Some[string](str).UnwrapAsPtr())
+	assert.EqualValues(t, &refStr, Some[*string](refStr).UnwrapAsPtr())
+	assert.Nil(t, None[string]().UnwrapAsPtr())
+	assert.Nil(t, None[*string]().UnwrapAsPtr())
+
+	i := 123
+	assert.Equal(t, &i, FromNillable[int](&i).UnwrapAsPtr())
+	assert.Nil(t, FromNillable[int](nil).UnwrapAsPtr())
+	assert.Equal(t, &i, *PtrFromNillable[int](&i).UnwrapAsPtr())
+	assert.Nil(t, PtrFromNillable[int](nil).UnwrapAsPtr())
+}
+
 func TestOption_Take(t *testing.T) {
 	v, err := Some[int](123).Take()
 	assert.NoError(t, err)

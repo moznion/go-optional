@@ -73,6 +73,16 @@ func (o Option[T]) Unwrap() T {
 	return o[value]
 }
 
+// UnwrapAsPtr returns the contained value in receiver Option as a pointer.
+// This is similar to `Unwrap()` method but the difference is this method returns a pointer value instead of the actual value.
+// If the receiver Option value is None, this method returns nil.
+func (o Option[T]) UnwrapAsPtr() *T {
+	if o.IsNone() {
+		return nil
+	}
+	return &o[value]
+}
+
 // Take takes the contained value in Option.
 // If Option value is Some, this returns the value that is contained in Option.
 // On the other hand, this returns an ErrNoneValueTaken as the second return value.

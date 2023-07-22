@@ -168,6 +168,40 @@ if err != nil {
 fmt.Printf("%s\n", marshal) // => {}
 ```
 
+### SQL Driver Support
+
+`Option[T]` satisfies [sql/driver.Valuer](https://pkg.go.dev/database/sql/driver#Valuer) and [sql.Scanner](https://pkg.go.dev/database/sql#Scanner), so this type can be used by SQL interface on Golang.
+
+example of the primitive usage:
+
+```go
+sqlStmt := "CREATE TABLE tbl (id INTEGER NOT NULL PRIMARY KEY, name VARCHAR(32));"
+db.Exec(sqlStmt)
+
+tx, _ := db.Begin()
+func() {
+    stmt, _ := tx.Prepare("INSERT INTO tbl(id, name) values(?, ?)")
+    defer stmt.Close()
+    stmt.Exec(1, "foo")
+}()
+func() {
+    stmt, _ := tx.Prepare("INSERT INTO tbl(id) values(?)")
+    defer stmt.Close()
+    stmt.Exec(2) // name is NULL
+}()
+tx.Commit()
+
+var maybeName Option[string]
+
+row := db.QueryRow("SELECT name FROM tbl WHERE id = 1")
+row.Scan(&maybeName)
+fmt.Println(maybeName) // Some[foo]
+
+row := db.QueryRow("SELECT name FROM tbl WHERE id = 2")
+row.Scan(&maybeName)
+fmt.Println(maybeName) // None[]
+```
+
 ## Known Issues
 
 The runtime raises a compile error like "methods cannot have type parameters", so `Map()`, `MapOr()`, `MapWithError()`, `MapOrWithError()`, `Zip()`, `ZipWith()`, `Unzip()` and `UnzipWith()` have been providing as functions. Basically, it would be better to provide them as the methods, but currently, it compromises with the limitation.

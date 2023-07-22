@@ -13,6 +13,7 @@ var (
 )
 
 // Option is a data type that must be Some (i.e. having a value) or None (i.e. doesn't have a value).
+// This type implements database/sql/driver.Valuer and database/sql.Scanner.
 type Option[T any] []T
 
 const (

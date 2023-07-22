@@ -57,7 +57,7 @@ and more detailed examples are here: [./examples_test.go](./examples_test.go).
 - [Option[T]#IsNone() bool](https://pkg.go.dev/github.com/moznion/go-optional#Option.IsNone)
 - [Option[T]#IsSome() bool](https://pkg.go.dev/github.com/moznion/go-optional#Option.IsSome)
 - [Option[T]#Unwrap() T](https://pkg.go.dev/github.com/moznion/go-optional#Option.Unwrap)
-- [Option[T]#UnwrapAsPtr() T](https://pkg.go.dev/github.com/moznion/go-optional#Option.UnwrapAsPtr)
+- [Option[T]#UnwrapAsPtr() \*T](https://pkg.go.dev/github.com/moznion/go-optional#Option.UnwrapAsPtr)
 - [Option[T]#Take() (T, error)](https://pkg.go.dev/github.com/moznion/go-optional#Option.Take)
 - [Option[T]#TakeOr(fallbackValue T) T](https://pkg.go.dev/github.com/moznion/go-optional#Option.TakeOr)
 - [Option[T]#TakeOrElse(fallbackFunc func() T) T](https://pkg.go.dev/github.com/moznion/go-optional#Option.TakeOrElse)

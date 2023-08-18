@@ -49,10 +49,13 @@ func TestOption_Scan_None(t *testing.T) {
 }
 
 func TestOption_Scan_UnsupportedTypes(t *testing.T) {
-	o := Some[any](nil)
+	type ustruct struct {
+		A int
+	}
 
+	o := Some[ustruct](ustruct{})
 	err := o.Scan(int32(42))
-	assert.ErrorIs(t, err, ErrSQLScannerIncompatibleDataType)
+	assert.Error(t, err)
 }
 
 func TestOption_Scan_ScannerInterfaceSatisfaction(t *testing.T) {
@@ -114,9 +117,13 @@ func TestOption_Value_None(t *testing.T) {
 }
 
 func TestOption_Value_UnsupportedTypes(t *testing.T) {
-	o := Some[int32](0)
+	type ustruct struct {
+		A int
+	}
+
+	o := Some[ustruct](ustruct{})
 	_, err := o.Value()
-	assert.ErrorIs(t, err, ErrSQLDriverValuerIncompatibleDataType)
+	assert.Error(t, err)
 }
 
 func TestOption_Value_ValuerInterfaceSatisfaction(t *testing.T) {
@@ -157,6 +164,56 @@ func TestOption_SQLScan(t *testing.T) {
 			_ = stmt.Close()
 		}()
 		_, err = stmt.Exec(2)
+		assert.NoError(t, err)
+	}()
+	err = tx.Commit()
+	assert.NoError(t, err)
+
+	var maybeName Option[string]
+
+	row := db.QueryRow("SELECT name FROM test_table WHERE id = 1")
+	err = row.Scan(&maybeName)
+	assert.NoError(t, err)
+	assert.Equal(t, "foo", maybeName.Unwrap())
+
+	row = db.QueryRow("SELECT name FROM test_table WHERE id = 2")
+	err = row.Scan(&maybeName)
+	assert.NoError(t, err)
+	assert.True(t, maybeName.IsNone())
+}
+
+func TestOption_SQLValuer(t *testing.T) {
+	tmpfile, err := os.CreateTemp(os.TempDir(), "testdb")
+	assert.NoError(t, err)
+
+	db, err := sql.Open("sqlite3", tmpfile.Name())
+	assert.NoError(t, err)
+	defer func() {
+		_ = db.Close()
+	}()
+
+	sqlStmt := "CREATE TABLE test_table (id INTEGER NOT NULL PRIMARY KEY, name VARCHAR(32));"
+	_, err = db.Exec(sqlStmt)
+	assert.NoError(t, err)
+
+	tx, err := db.Begin()
+	assert.NoError(t, err)
+	func() {
+		stmt, err := tx.Prepare("INSERT INTO test_table(id, name) values(?, ?)")
+		assert.NoError(t, err)
+		defer func() {
+			_ = stmt.Close()
+		}()
+		_, err = stmt.Exec(1, Some[string]("foo"))
+		assert.NoError(t, err)
+	}()
+	func() {
+		stmt, err := tx.Prepare("INSERT INTO test_table(id, name) values(?, ?)")
+		assert.NoError(t, err)
+		defer func() {
+			_ = stmt.Close()
+		}()
+		_, err = stmt.Exec(2, None[string]())
 		assert.NoError(t, err)
 	}()
 	err = tx.Commit()

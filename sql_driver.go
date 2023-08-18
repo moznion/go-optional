@@ -13,7 +13,7 @@ func (o *Option[T]) Scan(src any) error {
 	}
 
 	var v T
-	err := sqlConvertAssign(&v, src)
+	err := convertAssign(&v, src)
 	if err != nil {
 		return err
 	}

@@ -11,11 +11,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Set up Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v4
       with:
         go-version: ${{ matrix.go-version }}
     - name: check out
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: install tools
       run: "go install golang.org/x/tools/cmd/goimports@latest"
     - name: golangci-lint
@@ -25,7 +25,7 @@ jobs:
     - name: check
       run: make ci-check
     - name: upload coverage
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
 

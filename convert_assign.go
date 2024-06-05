@@ -1,6 +1,7 @@
 package optional
 
 import (
+	_ "database/sql"
 	_ "unsafe"
 )
 

@@ -1,24 +1,26 @@
 package optional
 
 import (
+	"database/sql"
 	"database/sql/driver"
 )
 
 // Scan assigns a value from a database driver.
 // This method is required from database/sql.Scanner interface.
 func (o *Option[T]) Scan(src any) error {
-	if src == nil {
-		*o = None[T]()
-		return nil
-	}
-
-	var v T
-	err := sqlConvertAssign(&v, src)
+	// The detour through sql.Null[T] allows us to access the standard rules for
+	// assigning scanned values into builtin types and std types like *sql.Rows,
+	// which are not exported from std directly.
+	var v sql.Null[T]
+	err := v.Scan(src)
 	if err != nil {
 		return err
 	}
-
-	*o = Some[T](v)
+	if v.Valid {
+		*o = Some[T](v.V)
+	} else {
+		*o = None[T]()
+	}
 	return nil
 }
 

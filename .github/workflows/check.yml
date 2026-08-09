@@ -30,3 +30,24 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
 
+  pgxoption:
+    name: Check pgxoption (nested module)
+    strategy:
+      matrix:
+        go-version: [1.23.x, 1.24.x]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: check out
+      uses: actions/checkout@v4
+    - name: test
+      run: go test -v -race ./...
+      working-directory: pgxoption
+    - name: vet
+      run: go vet ./...
+      working-directory: pgxoption
+

@@ -203,6 +203,19 @@ row.Scan(&maybeName)
 fmt.Println(maybeName) // None[]
 ```
 
+### pgx (PostgreSQL) native support
+
+For [pgx v5](https://github.com/jackc/pgx) users, the nested module
+[`pgxoption`](./pgxoption) registers `Option[T]` directly into pgx's
+type map, bypassing the `driver.Value` fallback for full type
+fidelity and better performance:
+
+```go
+pgxoption.Register(conn.TypeMap())
+```
+
+See [pgxoption/README.md](./pgxoption/README.md).
+
 ## Known Issues
 
 The runtime raises a compile error like "methods cannot have type parameters", so `Map()`, `MapOr()`, `MapWithError()`, `MapOrWithError()`, `Zip()`, `ZipWith()`, `Unzip()` and `UnzipWith()` have been providing as functions. Basically, it would be better to provide them as the methods, but currently, it compromises with the limitation.
